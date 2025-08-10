@@ -1,7 +1,7 @@
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ClientsProviderAsyncOptions, Transport } from '@nestjs/microservices';
 
-export const TRACK_PROCESSOR_SERVICE_TOKEN = 'CONSUME_SERVICE';
+export const TRACK_PROCESSOR_SERVICE_TOKEN = 'TRACK_PROCESSOR_SERVICE';
 
 export const trackProcessorClient: ClientsProviderAsyncOptions = {
   name: TRACK_PROCESSOR_SERVICE_TOKEN,
