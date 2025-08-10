@@ -1,0 +1,11 @@
+import { NestFactory } from '@nestjs/core';
+import { GatewayModule } from './app.module';
+import { setupSwagger } from './infrastructure/swagger/swagger.setup';
+
+async function bootstrap() {
+  const app = await NestFactory.create(GatewayModule);
+
+  setupSwagger(app);
+  await app.listen(process.env.PORT ?? 3000);
+}
+bootstrap();
