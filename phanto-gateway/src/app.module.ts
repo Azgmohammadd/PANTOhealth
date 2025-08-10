@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
+import { TrackProcessorModule } from './modules/trackProcessor/trackProcessor.module';
 
 @Module({
-  imports: [],
+  imports: [TrackProcessorModule],
   controllers: [],
   providers: [],
 })
-export class GatewayModule {}
+export class AppModule {}
