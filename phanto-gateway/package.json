@@ -20,6 +20,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@elastic/ecs-pino-format": "^1.5.0",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
@@ -32,6 +33,10 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "helmet": "^8.1.0",
+    "pino": "^9.8.0",
+    "pino-elasticsearch": "^8.1.0",
+    "pino-http": "^10.5.0",
+    "pino-roll": "^3.1.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },
