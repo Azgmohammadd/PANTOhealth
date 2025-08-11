@@ -1,10 +1,16 @@
 import { Module } from '@nestjs/common';
-import { TrackProcessorService } from './trackProcessor.service';
 import { TrackProcessorController } from './trackProcessor.controller';
+import { ClientsModule } from '@nestjs/microservices';
+import {
+  trackProcessorRQM,
+  trackProcessorTCP,
+} from 'src/services/amqp/trackProcessor.client';
 
 @Module({
-  imports: [],
+  imports: [
+    ClientsModule.registerAsync([trackProcessorRQM, trackProcessorTCP]),
+  ],
   controllers: [TrackProcessorController],
-  providers: [TrackProcessorService],
+  providers: [],
 })
 export class TrackProcessorModule {}
