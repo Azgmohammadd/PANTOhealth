@@ -1,12 +1,11 @@
-import {
-  Injectable,
-  LogLevel,
-  LoggerService as NestLoggerService,
-} from '@nestjs/common';
-import { join } from 'path';
-import pino from 'pino';
+/* eslint-disable @typescript-eslint/no-require-imports */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { Injectable, LoggerService as NestLoggerService } from '@nestjs/common';
+import pino, { multistream } from 'pino';
 import pinoHttp from 'pino-http';
 import { ecsFormat } from '@elastic/ecs-pino-format';
+const pinoElastic = require('pino-elasticsearch');
 
 @Injectable()
 export class LoggerService implements NestLoggerService {
@@ -14,20 +13,9 @@ export class LoggerService implements NestLoggerService {
   public readonly httpMiddleware: ReturnType<typeof pinoHttp>;
 
   constructor() {
-    const transport = pino.transport({
-      targets: [
-        {
-          target: 'pino-roll',
-          level: 'info',
-          options: {
-            file: join('logs', 'app.log'), //FIXME: date
-            frequency: 'daily',
-            mkdir: true,
-            size: '10m',
-          },
-        },
-        //TODO: add elk
-      ],
+    const streamToElasticSearch = pinoElastic({
+      index: 'phanto-logs',
+      node: process.env.ELASTICSEARCH_URL || 'http://localhost:9200',
     });
 
     this.logger = pino(
@@ -35,25 +23,33 @@ export class LoggerService implements NestLoggerService {
         level: process.env.LOG_LEVEL || 'info',
         ...ecsFormat(),
       },
-      transport,
+      multistream([
+        { stream: process.stdout },
+        { stream: streamToElasticSearch }, //FIXME: the elasticsearch is empty.
+      ]),
     );
 
     this.httpMiddleware = pinoHttp({
       logger: this.logger,
     });
   }
+
   log(message: any, context?: string) {
     this.logger.info({ context }, message);
   }
+
   error(message: any, trace?: string, context?: string) {
     this.logger.error({ trace, context }, message);
   }
+
   warn(message: any, context?: string) {
     this.logger.warn({ context }, message);
   }
+
   debug(message: any, context?: string) {
     this.logger.debug({ context }, message);
   }
+
   verbose?(message: any, context?: string) {
     this.logger.trace({ context }, message);
   }
