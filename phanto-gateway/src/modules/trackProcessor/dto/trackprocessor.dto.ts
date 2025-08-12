@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsArray, IsNumber, IsObject, ValidateNested } from 'class-validator';
+import { IsArray, IsNumber, ValidateNested } from 'class-validator';
 
 export class CoordinateDataDto {
   @ApiProperty({ example: 51.339764, description: 'X coordinate (latitude)' })
@@ -55,18 +55,5 @@ export class DeviceDataDto {
 }
 
 export class TrackProcessorDataDto {
-  @ApiProperty({
-    example: {
-      '66bb584d4ae73e488c30a072': {
-        data: [
-          [762, [51.339764, 12.339223833333334, 1.2038]],
-          [1766, [51.3397773, 12.3392118, 1.531604]],
-        ],
-        time: 1735683480000,
-      },
-    },
-    description: 'Map of deviceId to its recorded data',
-  })
-  @IsObject()
-  deviceData: Record<string, DeviceDataDto>;
+  [deviceId: string]: DeviceDataDto;
 }
