@@ -13,6 +13,10 @@ services:
       - discovery.type=single-node
       - xpack.security.enabled=false
       - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
+      - cluster.routing.allocation.disk.watermark.low=95%
+      - cluster.routing.allocation.disk.watermark.high=97%
+      - cluster.routing.allocation.disk.watermark.flood_stage=99%
+      - cluster.routing.allocation.disk.threshold_enabled=false
     volumes:
       - es_data:/usr/share/elasticsearch/data
     ports:
