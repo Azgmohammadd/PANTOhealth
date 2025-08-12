@@ -1,10 +1,11 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { AppModule } from './app.module';
+import { LoggerService } from './modules/logger/logger.service';
+import { LoggingInterceptor } from './common/interceptors/logger.interceptor';
 
 async function bootstrap() {
-  //TODO: read data from environment variables
-  // TODO: rename to trackProcessor
+  const logger = new LoggerService();
   const rmq_app = await NestFactory.createMicroservice<MicroserviceOptions>(
     AppModule,
     {
@@ -16,8 +17,10 @@ async function bootstrap() {
           durable: true,
         },
       },
+      logger,
     },
   );
+  rmq_app.useGlobalInterceptors(new LoggingInterceptor(logger));
 
   const tcp_app = await NestFactory.createMicroservice<MicroserviceOptions>(
     AppModule,
@@ -27,8 +30,11 @@ async function bootstrap() {
         host: 'localhost',
         port: 3001,
       },
+      logger,
     },
   );
+
+  tcp_app.useGlobalInterceptors(new LoggingInterceptor(logger));
 
   await Promise.all([rmq_app.listen(), tcp_app.listen()]);
 }
