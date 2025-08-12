@@ -1,56 +1,71 @@
-/* eslint-disable @typescript-eslint/no-require-imports */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable */
 import { Injectable, LoggerService as NestLoggerService } from '@nestjs/common';
 import pino, { multistream } from 'pino';
-import pinoHttp from 'pino-http';
-import { ecsFormat } from '@elastic/ecs-pino-format';
-const pinoElastic = require('pino-elasticsearch');
+import pinoElastic from 'pino-elasticsearch';
+import pinoPretty from 'pino-pretty';
 
 @Injectable()
 export class LoggerService implements NestLoggerService {
   private readonly logger: pino.Logger;
-  public readonly httpMiddleware: ReturnType<typeof pinoHttp>;
 
   constructor() {
     const streamToElasticSearch = pinoElastic({
       index: 'phanto-logs',
       node: process.env.ELASTICSEARCH_URL || 'http://localhost:9200',
+      flushBytes: 1,
+    });
+
+    const pretty = pinoPretty({
+      colorize: true,
+      colorizeObjects: true,
     });
 
     this.logger = pino(
-      {
-        level: process.env.LOG_LEVEL || 'info',
-        ...ecsFormat(),
-      },
+      { level: 'info' },
       multistream([
-        { stream: process.stdout },
-        { stream: streamToElasticSearch }, //FIXME: the elasticsearch is empty.
+        { stream: pretty, },
+        { stream: streamToElasticSearch },
       ]),
     );
-
-    this.httpMiddleware = pinoHttp({
-      logger: this.logger,
-    });
   }
 
   log(message: any, context?: string) {
-    this.logger.info({ context }, message);
+    if (typeof message === 'object') {
+      this.logger.info({...message }, context);
+    } else {
+      this.logger.info({ message }, context);
+    }
   }
 
   error(message: any, trace?: string, context?: string) {
-    this.logger.error({ trace, context }, message);
+    if (typeof message === 'object') {
+      this.logger.error({...message, trace }, context);
+    } else {
+      this.logger.error({ message, trace }, context);
+    }
   }
 
   warn(message: any, context?: string) {
-    this.logger.warn({ context }, message);
+    if (typeof message === 'object') {
+      this.logger.warn({...message }, context);
+    } else {
+      this.logger.warn({ message }, context);
+    }
   }
 
   debug(message: any, context?: string) {
-    this.logger.debug({ context }, message);
+    if (typeof message === 'object') {
+      this.logger.debug({...message }, context);
+    } else {
+      this.logger.debug({ message }, context);
+    }
   }
 
   verbose?(message: any, context?: string) {
-    this.logger.trace({ context }, message);
+    if (typeof message === 'object') {
+      this.logger.trace({...message }, context);
+    } else {
+      this.logger.trace({ message }, context);
+    }
   }
 }
