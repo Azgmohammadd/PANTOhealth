@@ -5,15 +5,17 @@ import { SignalDTO } from './dto/signal.dto';
 
 @Controller()
 export class SignalProcessorController {
-  constructor(private readonly appService: SignalProcessorService) {}
+  constructor(
+    private readonly signalProcessorService: SignalProcessorService,
+  ) {}
 
   @MessagePattern('get_signal', Transport.TCP)
-  getHello(): string {
-    return this.appService.getHello();
+  async getSignals() {
+    return await this.signalProcessorService.getSignals();
   }
 
   @EventPattern('signal_created', Transport.RMQ)
   handleSignalCreated(data: SignalDTO) {
-    this.appService.createSignal(data);
+    this.signalProcessorService.createSignal(data);
   }
 }
