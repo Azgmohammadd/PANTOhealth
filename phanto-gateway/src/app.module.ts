@@ -9,9 +9,7 @@ import { ConfigModule } from '@nestjs/config';
     LoggerModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env.example',
-      cache: true,
-      expandVariables: true,
+      // envFilePath: '.env.example',
     }),
   ],
   controllers: [],
