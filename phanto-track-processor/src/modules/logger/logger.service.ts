@@ -11,7 +11,7 @@ export class LoggerService implements NestLoggerService {
   constructor() {
     const streamToElasticSearch = pinoElastic({
       index: 'phanto-logs',
-      node: process.env.ELASTICSEARCH_URL || 'http://localhost:9200',
+      node: process.env.ELASTICSEARCH_URL || 'http://elasticsearch:9200',
       flushBytes: 1,
     });
 
@@ -30,22 +30,42 @@ export class LoggerService implements NestLoggerService {
   }
 
   log(message: any, context?: string) {
-    this.logger.info(message, context);
+    if (typeof message === 'object') {
+      this.logger.info({...message }, context);
+    } else {
+      this.logger.info({ message }, context);
+    }
   }
 
   error(message: any, trace?: string, context?: string) {
-    this.logger.error({ trace, context }, message);
+    if (typeof message === 'object') {
+      this.logger.error({...message, trace }, context);
+    } else {
+      this.logger.error({ message, trace }, context);
+    }
   }
 
   warn(message: any, context?: string) {
-    this.logger.warn({ context }, message);
+    if (typeof message === 'object') {
+      this.logger.warn({...message }, context);
+    } else {
+      this.logger.warn({ message }, context);
+    }
   }
 
   debug(message: any, context?: string) {
-    this.logger.debug({ context }, message);
+    if (typeof message === 'object') {
+      this.logger.debug({...message }, context);
+    } else {
+      this.logger.debug({ message }, context);
+    }
   }
 
   verbose?(message: any, context?: string) {
-    this.logger.trace({ context }, message);
+    if (typeof message === 'object') {
+      this.logger.trace({...message }, context);
+    } else {
+      this.logger.trace({ message }, context);
+    }
   }
 }
