@@ -17,7 +17,7 @@ import {
 import { TrackProcessorService } from './trackProcessor.service';
 
 @Controller('track-processor@1')
-@ApiTags('Signal', 'track-processor')
+@ApiTags('track-processor')
 export class TrackProcessorV1Controller {
   constructor(private readonly trackProcessorService: TrackProcessorService) {}
 
