@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsArray, IsNumber, ValidateNested } from 'class-validator';
+import { IsArray, IsNumber, IsOptional, ValidateNested } from 'class-validator';
 
 export class CoordinateDataDto {
   @ApiProperty({ example: 51.339764, description: 'X coordinate (latitude)' })
@@ -56,4 +56,24 @@ export class DeviceDataDto {
 
 export class TrackProcessorDataDto {
   [deviceId: string]: DeviceDataDto;
+}
+
+export class DeviceDataQueryDto {
+  @IsOptional()
+  latest?: boolean;
+
+  @IsOptional()
+  start?: number;
+
+  @IsOptional()
+  end?: number;
+
+  @IsOptional()
+  minSpeed?: number;
+
+  @IsOptional()
+  pageSize: number;
+
+  @IsOptional()
+  pageNumber: number;
 }
