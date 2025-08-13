@@ -1,11 +1,4 @@
 services:
-  redis:
-    image: redis:7
-    container_name: phanto-redis
-    restart: always
-    ports:
-      - "6379:6379"
-
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
     container_name: phanto-elasticsearch
@@ -21,8 +14,6 @@ services:
       - es_data:/usr/share/elasticsearch/data
     ports:
       - "9200:9200"
-    networks:
-      - elk
 
   kibana:
     image: docker.elastic.co/kibana/kibana:8.13.4
@@ -31,8 +22,6 @@ services:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
     ports:
       - "5601:5601"
-    networks:
-      - elk
 
   rabbitmq:
     image: rabbitmq
@@ -46,6 +35,11 @@ services:
       - RABBITMQ_DEFAULT_PASS=guest
     volumes:
       - rmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
 
   mongo:
     image: mongo:6
@@ -53,20 +47,46 @@ services:
     restart: always
     ports:
       - "27017:27017"
-    networks:
-      - mongo
     volumes:
       - mongo_data:/data/db
 
+  gateway:
+    build:
+      context: ./phanto-gateway
+    container_name: phanto-gateway
+    restart: always
+    depends_on:
+      - rabbitmq
+      - track-processor
+    environment:
+      - PORT=3000
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - TRACK_PROCESSOR_AMQP_URL='amqp://rabbitmq:5672'
+      - TRACK_PROCESSOR_AMQP_QUEUE=signal
+      - TRACK_PROCESSOR_TCP_HOST=track-processor
+      - TRACK_PROCESSOR_TCP_PORT=3001
+    ports:
+      - "3000:3000"
+
+  track-processor:
+    build:
+      context: ./phanto-track-processor
+    container_name: phanto-track-processor
+    restart: always
+    depends_on:
+        mongo:
+          condition: service_started
+        rabbitmq:
+          condition: service_healthy
+    environment:
+      - RMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - RMQ_QUEUE=signal
+      - TCP_HOST=0.0.0.0
+      - TCP_PORT=3001
+      - MONGO_URI=mongodb://mongo:27017/phanto  
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
 volumes:
   es_data:
   rmq_data:
   mongo_data:
 
-networks:
-  elk:
-    driver: bridge
-  rmq:
-    driver: bridge
-  mongo:
-    driver: bridge
