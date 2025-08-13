@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { TrackProcessorModule } from './modules/trackProcessor/trackProcessor.module';
-import { LoggerModule } from './modules/logger/logger.module';
 import { ConfigModule } from '@nestjs/config';
+import { LoggerModule } from './modules/logger/logger.module';
+import { TrackProcessorModule } from './modules/trackProcessor/trackProcessor.module';
 
 @Module({
   imports: [
@@ -9,9 +9,7 @@ import { ConfigModule } from '@nestjs/config';
     LoggerModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env.example',
-      cache: true,
-      expandVariables: true,
+      // envFilePath: '.env.example',
     }),
   ],
   controllers: [],
