@@ -23,7 +23,7 @@ export class LoggingInterceptor implements NestInterceptor {
     const controllerName = context.getClass().name;
 
     this.logger.log({
-        service: 'phanto-gateway',
+        service: 'phanto-track-processor',
         controller: controllerName,
         handler: handlerName,
         requestId: requestId,
@@ -38,7 +38,7 @@ export class LoggingInterceptor implements NestInterceptor {
       tap((data) => {
         const ms = Date.now() - start;
         this.logger.log({
-          service: 'phanto-gateway',
+          service: 'phanto-track-processor',
           controller: controllerName,
           handler: handlerName,
           requestId: requestId,
