@@ -61,7 +61,7 @@ services:
     environment:
       - PORT=3000
       - ELASTICSEARCH_URL=http://elasticsearch:9200
-      - TRACK_PROCESSOR_AMQP_URL='amqp://rabbitmq:5672'
+      - TRACK_PROCESSOR_AMQP_URL=amqp://rabbitmq:5672
       - TRACK_PROCESSOR_AMQP_QUEUE=signal
       - TRACK_PROCESSOR_TCP_HOST=track-processor
       - TRACK_PROCESSOR_TCP_PORT=3001
