@@ -46,10 +46,10 @@ export class TrackProcessorService {
     if (query.start || query.end)
       return this.#getByRange(
         deviceId,
-        query.start,
-        query.end,
         query.pageSize ?? 0,
         query.pageNumber ?? 0,
+        query.start,
+        query.end,
       );
 
     this.throwError(ERRORS.INVALID_QUERY);
@@ -134,8 +134,8 @@ export class TrackProcessorService {
         {
           deviceId,
           minSpeed: +minSpeed,
-          pageSize,
-          pageNumber,
+          pageSize: +pageSize,
+          pageNumber: +pageNumber,
         },
       );
 
@@ -147,10 +147,10 @@ export class TrackProcessorService {
 
   #getByRange(
     deviceId: string,
+    pageSize: number,
+    pageNumber: number,
     start?: number,
     end?: number,
-    pageSize?: number,
-    pageNumber?: number,
   ) {
     try {
       const response$ = this.trackProcessorTcpClient.send(
@@ -159,8 +159,8 @@ export class TrackProcessorService {
           deviceId,
           start: start ? +start : null,
           end: end ? +end : null,
-          pageSize: pageSize ? +pageSize : null,
-          pageNumber: pageNumber ? +pageNumber : null,
+          pageSize: +pageSize,
+          pageNumber: +pageNumber,
         },
       );
 

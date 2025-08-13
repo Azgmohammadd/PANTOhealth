@@ -111,7 +111,7 @@ export class SignalProcessorService {
         { $sort: { timestampIso: -1 } },
       ];
 
-      if (pageNumber !== 0 && pageSize !== 0) {
+      if (pageNumber && pageSize) {
         pipeline.push(
           { $skip: (pageNumber - 1) * pageSize },
           { $limit: pageSize },
