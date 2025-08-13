@@ -9,7 +9,7 @@ export class Signal {
   deviceId: string;
 
   @Prop({ required: true })
-  timestamp: string;
+  timestamp: number;
 
   @Prop({ required: true })
   timestampIso: Date;
