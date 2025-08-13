@@ -11,7 +11,7 @@ export class LoggerService implements NestLoggerService {
   constructor() {
     const streamToElasticSearch = pinoElastic({
       index: 'phanto-logs',
-      node: process.env.ELASTICSEARCH_URL || 'http://localhost:9200',
+      node: process.env.ELASTICSEARCH_URL || 'http://elasticsearch:9200',
       flushBytes: 1,
     });
 
