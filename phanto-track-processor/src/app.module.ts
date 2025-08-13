@@ -9,8 +9,8 @@ import { SignalGeneratorService } from './modules/signal-generator/signal-genera
 @Module({
   imports: [
     ConfigModule.forRoot({
-      // isGlobal: true,
-      envFilePath: '.env.example',
+      isGlobal: true,
+      // envFilePath: '.env.example',
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
